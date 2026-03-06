@@ -98,7 +98,7 @@ fn handle_svg_modified(
 /// Handles removed and unused [`SvgFile`]s by cleaning up associated [`Sprite`]
 /// components. This fires when an [`Asset`] is either explicitly removed from
 /// the asset system, or removed due to the last strong handle being dropped.
-/// This coresponds to [`AssetEvent::Removed`] and [`AssetEvent::Unused`],
+/// This corresponds to [`AssetEvent::Removed`] and [`AssetEvent::Unused`],
 /// respectively.
 fn handle_svg_removed(
     mut commands: Commands,

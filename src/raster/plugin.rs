@@ -1,6 +1,6 @@
 use crate::raster::{
     asset::{SvgFile, loader::SvgFileLoader},
-    component::Svg,
+    component::{Svg, UiSvg},
 };
 use bevy::prelude::*;
 
@@ -15,7 +15,14 @@ impl Plugin for SvgRasterPlugin {
             .init_asset_loader::<SvgFileLoader>()
             .add_systems(
                 Update,
-                (handle_svg_loaded, handle_svg_modified, handle_svg_removed),
+                (
+                    handle_svg_loaded,
+                    handle_svg_modified,
+                    handle_svg_removed,
+                    handle_ui_svg_loaded,
+                    handle_ui_svg_modified,
+                    handle_ui_svg_removed,
+                ),
             );
     }
 }
@@ -104,6 +111,79 @@ fn handle_svg_removed(
         if removed_ids.contains(&id) {
             commands.entity(entity).remove::<Sprite>();
             info!("Removed `Sprite` for `{id}` from entity {entity:?}");
+        }
+    }
+}
+
+/// Handles newly loaded [`SvgFile`]s by adding [`ImageNode`] components to
+/// waiting entities in UI. This responds to
+/// [`AssetEvent::LoadedWithDependencies`].
+fn handle_ui_svg_loaded(
+    mut commands: Commands,
+    mut svg_events: MessageReader<AssetEvent<SvgFile>>,
+    svg_assets: Res<Assets<SvgFile>>,
+    mut images: ResMut<Assets<Image>>,
+    query: Query<(Entity, &UiSvg), Without<ImageNode>>,
+) {
+    let loaded_ids = read_events!(svg_events, AssetEvent::LoadedWithDependencies);
+
+    for (entity, svg) in &query {
+        let id = svg.0.id();
+        if loaded_ids.contains(&id) {
+            if let Some(svg_file) = svg_assets.get(id) {
+                let image_handle = images.add(svg_file.0.clone());
+                commands.entity(entity).insert(ImageNode::new(image_handle));
+                debug!("Added `ImageNode` for `{id}` to entity {entity:?}");
+            } else {
+                warn!("`{id}` reported as loaded, but not found in `Assets`");
+            }
+        }
+    }
+}
+
+/// Handles modified [`SvgFile`]s by updating existing [`ImageNode`]s.
+/// This responds to [`AssetEvent::Modified`].
+fn handle_ui_svg_modified(
+    mut svg_events: MessageReader<AssetEvent<SvgFile>>,
+    svg_assets: Res<Assets<SvgFile>>,
+    mut images: ResMut<Assets<Image>>,
+    mut query: Query<(&UiSvg, &mut ImageNode)>,
+) {
+    let modified_ids = read_events!(svg_events, AssetEvent::Modified);
+
+    for (svg, mut image_node) in &mut query {
+        let id = svg.0.id();
+        if modified_ids.contains(&id) {
+            if let Some(svg_file) = svg_assets.get(id) {
+                if let Some(image) = images.get_mut(&image_node.image) {
+                    *image = svg_file.0.clone();
+                    debug!("Updated `Image` data for modified UI `{id}`");
+                } else {
+                    image_node.image = images.add(svg_file.0.clone());
+                    debug!("Replaced UI `Handle<Image>` for modified `{id}`");
+                }
+            } else {
+                warn!("`{id}` reported as modified, but not found in `Assets`");
+            }
+        }
+    }
+}
+
+/// Handles removed and unused [`SvgFile`]s by cleaning up associated
+/// [`ImageNode`] components in UI. This corresponds to
+/// [`AssetEvent::Removed`] and [`AssetEvent::Unused`], respectively.
+fn handle_ui_svg_removed(
+    mut commands: Commands,
+    mut svg_events: MessageReader<AssetEvent<SvgFile>>,
+    query: Query<(Entity, &UiSvg), With<ImageNode>>,
+) {
+    let removed_ids = read_events!(svg_events, AssetEvent::Removed | AssetEvent::Unused);
+
+    for (entity, svg) in query {
+        let id = svg.0.id();
+        if removed_ids.contains(&id) {
+            commands.entity(entity).remove::<ImageNode>();
+            info!("Removed `ImageNode` for `{id}` from entity {entity:?}");
         }
     }
 }

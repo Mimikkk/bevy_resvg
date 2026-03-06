@@ -29,12 +29,21 @@ impl Plugin for SvgRasterPlugin {
 }
 
 macro_rules! read_events {
-    ($svg_events:expr, $($asset_event:path) | +) => {
-        $svg_events.read().filter_map(|event| match event {
-            $($asset_event { id } => Some(*id)),+,
-            _ => None,
-        }).collect::<HashSet<_>>()
-    };
+    ($svg_events:expr, $($asset_event:path) | +) => {{
+        let mut ids = None;
+        for event in $svg_events.read() {
+            match event {
+                $($asset_event { id }) | + => {
+                    ids.get_or_insert_with(HashSet::new).insert(*id);
+                }
+                _ => (),
+            }
+        }
+        let Some(ids) = ids else {
+            return;
+        };
+        ids
+    }};
 }
 
 fn new_image_from_svg(
@@ -80,6 +89,9 @@ fn handle_svg_loaded(
     query: Query<(Entity, &Svg), Without<Sprite>>,
 ) {
     let loaded_ids = read_events!(svg_events, AssetEvent::LoadedWithDependencies);
+    if loaded_ids.is_empty() {
+        return;
+    }
 
     for (entity, svg) in &query {
         let id = svg.0.id();
@@ -104,6 +116,9 @@ fn handle_svg_modified(
     mut query: Query<(&Svg, &mut Sprite)>,
 ) {
     let modified_ids = read_events!(svg_events, AssetEvent::Modified);
+    if modified_ids.is_empty() {
+        return;
+    }
 
     for (svg, mut sprite) in &mut query {
         let id = svg.0.id();
@@ -124,6 +139,10 @@ fn handle_svg_removed(
     query: Query<(Entity, &Svg), With<Sprite>>,
 ) {
     let removed_ids = read_events!(svg_events, AssetEvent::Removed | AssetEvent::Unused);
+
+    if removed_ids.is_empty() {
+        return;
+    }
 
     for (entity, svg) in query {
         let id = svg.0.id();
@@ -146,6 +165,10 @@ fn handle_ui_svg_loaded(
 ) {
     let loaded_ids = read_events!(svg_events, AssetEvent::LoadedWithDependencies);
 
+    if loaded_ids.is_empty() {
+        return;
+    }
+
     for (entity, svg) in &query {
         let id = svg.0.id();
         if loaded_ids.contains(&id)
@@ -167,6 +190,10 @@ fn handle_ui_svg_modified(
 ) {
     let modified_ids = read_events!(svg_events, AssetEvent::Modified);
 
+    if modified_ids.is_empty() {
+        return;
+    }
+
     for (svg, mut image_node) in &mut query {
         let id = svg.0.id();
         if modified_ids.contains(&id) {
@@ -184,6 +211,10 @@ fn handle_ui_svg_removed(
     query: Query<(Entity, &UiSvg), With<ImageNode>>,
 ) {
     let removed_ids = read_events!(svg_events, AssetEvent::Removed | AssetEvent::Unused);
+
+    if removed_ids.is_empty() {
+        return;
+    }
 
     for (entity, svg) in query {
         let id = svg.0.id();

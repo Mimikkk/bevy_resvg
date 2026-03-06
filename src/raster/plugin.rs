@@ -37,6 +37,39 @@ macro_rules! read_events {
     };
 }
 
+fn new_image_from_svg(
+    id: AssetId<SvgFile>,
+    svg_assets: &Assets<SvgFile>,
+    images: &mut Assets<Image>,
+) -> Option<Handle<Image>> {
+    svg_assets.get(id).map_or_else(
+        || {
+            warn!("`{id}` reported in events, but not found in `Assets`");
+            None
+        },
+        |svg_file| Some(images.add(svg_file.0.clone())),
+    )
+}
+
+fn sync_existing_image_from_svg(
+    id: AssetId<SvgFile>,
+    svg_assets: &Assets<SvgFile>,
+    images: &mut Assets<Image>,
+    image_handle: &mut Handle<Image>,
+) {
+    if let Some(svg_file) = svg_assets.get(id) {
+        if let Some(image) = images.get_mut(image_handle.id()) {
+            *image = svg_file.0.clone();
+            debug!("Updated `Image` data for modified `{id}`");
+        } else {
+            *image_handle = images.add(svg_file.0.clone());
+            debug!("Replaced `Handle<Image>` for modified `{id}`");
+        }
+    } else {
+        warn!("`{id}` reported as modified, but not found in `Assets`");
+    }
+}
+
 /// Handles newly loaded [`SvgFile`]s by adding [`Sprite`] components to waiting
 /// entities. This responds to [`AssetEvent::LoadedWithDependencies`].
 fn handle_svg_loaded(
@@ -50,16 +83,13 @@ fn handle_svg_loaded(
 
     for (entity, svg) in &query {
         let id = svg.0.id();
-        if loaded_ids.contains(&id) {
-            if let Some(svg_file) = svg_assets.get(id) {
-                let image_handle = images.add(svg_file.0.clone());
-                commands
-                    .entity(entity)
-                    .insert(Sprite::from_image(image_handle));
-                debug!("Added `Sprite` for `{id}` to entity {entity:?}");
-            } else {
-                warn!("`{id}` reported as loaded, but not found in `Assets`");
-            }
+        if loaded_ids.contains(&id)
+            && let Some(image_handle) = new_image_from_svg(id, &svg_assets, &mut images)
+        {
+            commands
+                .entity(entity)
+                .insert(Sprite::from_image(image_handle));
+            debug!("Added `Sprite` for `{id}` to entity {entity:?}");
         }
     }
 }
@@ -78,19 +108,7 @@ fn handle_svg_modified(
     for (svg, mut sprite) in &mut query {
         let id = svg.0.id();
         if modified_ids.contains(&id) {
-            if let Some(svg_file) = svg_assets.get(id) {
-                // Update the image data in-place instead of creating new handle
-                if let Some(image) = images.get_mut(&sprite.image) {
-                    *image = svg_file.0.clone();
-                    debug!("Updated `Image` data for modified `{id}`");
-                } else {
-                    // Fallback: create new handle if old one is invalid
-                    sprite.image = images.add(svg_file.0.clone());
-                    debug!("Replaced `Handle<Image>` for modified `{id}`");
-                }
-            } else {
-                warn!("`{id}` reported as modified, but not found in `Assets`");
-            }
+            sync_existing_image_from_svg(id, &svg_assets, &mut images, &mut sprite.image);
         }
     }
 }
@@ -130,14 +148,11 @@ fn handle_ui_svg_loaded(
 
     for (entity, svg) in &query {
         let id = svg.0.id();
-        if loaded_ids.contains(&id) {
-            if let Some(svg_file) = svg_assets.get(id) {
-                let image_handle = images.add(svg_file.0.clone());
-                commands.entity(entity).insert(ImageNode::new(image_handle));
-                debug!("Added `ImageNode` for `{id}` to entity {entity:?}");
-            } else {
-                warn!("`{id}` reported as loaded, but not found in `Assets`");
-            }
+        if loaded_ids.contains(&id)
+            && let Some(image_handle) = new_image_from_svg(id, &svg_assets, &mut images)
+        {
+            commands.entity(entity).insert(ImageNode::new(image_handle));
+            debug!("Added `ImageNode` for `{id}` to entity {entity:?}");
         }
     }
 }
@@ -155,17 +170,7 @@ fn handle_ui_svg_modified(
     for (svg, mut image_node) in &mut query {
         let id = svg.0.id();
         if modified_ids.contains(&id) {
-            if let Some(svg_file) = svg_assets.get(id) {
-                if let Some(image) = images.get_mut(&image_node.image) {
-                    *image = svg_file.0.clone();
-                    debug!("Updated `Image` data for modified UI `{id}`");
-                } else {
-                    image_node.image = images.add(svg_file.0.clone());
-                    debug!("Replaced UI `Handle<Image>` for modified `{id}`");
-                }
-            } else {
-                warn!("`{id}` reported as modified, but not found in `Assets`");
-            }
+            sync_existing_image_from_svg(id, &svg_assets, &mut images, &mut image_node.image);
         }
     }
 }

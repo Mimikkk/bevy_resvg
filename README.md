@@ -45,23 +45,23 @@ Here's a complete comparison between the three:
 
 ## Comparison between Bevy Resvg, `bevy_svg`, and Bevy Vello
 
-|          Feature          |    |           Bevy Resvg           |    |     `bevy_svg`      |    |           Bevy Vello            |
-| ------------------------- | -- | ------------------------------ | -- | ------------------- | -- | ------------------------------- |
-| Source Lines of Code      | 🔽 |                        233[^1] | 🔼 |        1904[^1][^2] | ⏫ |                    6361[^1][^3] |
-| Code Complexity           | 😀 |                         11[^1] | 😵‍💫 |         145[^1][^2] | 😵 |                     409[^1][^3] |
-| Hot-reloading of SVGs     | ✅ | Supported                      | ✅ | Supported           | ❌ | Unsupported                     |
-| Changing runtime color    | ✅ | Supported                      | ❌ | Unsupported         | ❌ | Unsupported                     |
-| Gradients                 | ✅ | Supported                      | ❌ | Unsupported         | ⚠️ | Inaccurate                      |
-| Semi-transparency         | ✅ | Supported                      | ❌ | Unsupported         | ✅ | Supported                       |
-| Positioning and sizing    | ✅ | Native (`Sprite`-based)        | ❌ | Janky and imprecise | ✅ | Native (`Image`-based)          |
-| Static SVG Spec Support   | ✅ | Fully Supported                | ⚠️ | Partial Support     | ⚠️ | Partial Support                 |
-| Rendered quality (normal) | ✅ | Crisp                          | ✅ | Crisp               | ✅ | Crisp                           |
-| Rendered quality (zoomed) | ❌ | Blurry and Pixelated           | ✅ | Crisp               | ✅ | Crisp                           |
-| 3D-Rendering              | ❌ | Unsupported                    | ✅ | Supported           | ✅ | Supported                       |
-| Animated SVGs             | ❌ | Unsupported                    | ❌ | Unsupported         | ❌ | Unsupported                     |
-| Approach                  | 🖼️ | Rasterisation (once)           | 🔺 | Tesselation         | ⚙️ | Rasterisation (JIT every frame) |
-| Output                    | 🏃‍➡️ | Sprite                         | 🕸  | Mesh2d              | 🔀 | Mesh2d with image-based texture |
-| Licence                   | 🟰 | MIT OR Apache-2.0              | 🟰 | MIT OR Apache-2.0   | 🟰 | MIT OR Apache-2.0               |
+|          Feature          |    |              Bevy Resvg               |    |     `bevy_svg`      |    |             Bevy Vello             |
+| ------------------------- | -- | ------------------------------------- | -- | ------------------- | -- | ---------------------------------- |
+| Source Lines of Code      | 🔽 |                               233[^1] | 🔼 |        1904[^1][^2] | ⏫ |                    6361[^1][^3]    |  
+| Code Complexity           | 😀 |                                11[^1] | 😵‍💫 |         145[^1][^2] | 😵 |                     409[^1][^3]    |
+| Hot-reloading of SVGs     | ✅ | Supported                             | ✅ | Supported           | ❌ | Unsupported                        |
+| Changing runtime color    | ✅ | Supported                             | ❌ | Unsupported         | ❌ | Unsupported                        |
+| Gradients                 | ✅ | Supported                             | ❌ | Unsupported         | ⚠️ | Inaccurate                         |
+| Semi-transparency         | ✅ | Supported                             | ❌ | Unsupported         | ✅ | Supported                          |
+| Positioning and sizing    | ✅ | Native (`Sprite` & `ImageNode`-based) | ❌ | Janky and imprecise | ✅ | Native (`Image`-based)             |
+| Static SVG Spec Support   | ✅ | Fully Supported                       | ⚠️ | Partial Support     | ⚠️ | Partial Support                    |
+| Rendered quality (normal) | ✅ | Crisp                                 | ✅ | Crisp               | ✅ | Crisp                              |
+| Rendered quality (zoomed) | ❌ | Blurry and Pixelated                  | ✅ | Crisp               | ✅ | Crisp                              |
+| 3D-Rendering              | ❌ | Unsupported                           | ✅ | Supported           | ✅ | Supported                          |
+| Animated SVGs             | ❌ | Unsupported                           | ❌ | Unsupported         | ❌ | Unsupported                        |
+| Approach                  | 🖼️ | Rasterisation (once)                  | 🔺 | Tesselation         | ⚙️ | Rasterisation (JIT every frame)    |
+| Output                    | 🏃‍➡️ | `Sprite` (2D) or `ImageNode` (UI)     | 🕸  | `Mesh2d`            | 🔀 | `Mesh2d` with image-based texture  |
+| Licence                   | 🟰 | MIT OR Apache-2.0                     | 🟰 | MIT OR Apache-2.0   | 🟰 | MIT OR Apache-2.0                  |
 
 >[!NOTE]
 >In order to be able to hot-reload your SVGs, you must enable the
@@ -147,6 +147,7 @@ Resvg.
 Currently, the only examples are:
 
 - [`simple.rs`](./examples/simple.rs): shows the most basic usage of Bevy Resvg
+- [`ui`](./examples/ui.rs): shows how to render `UiSvg`'s in UI nodes
 - [`zoom.rs`](./examples/zoom.rs): shows what happens when you zoom too far into
   an SVG.
 
@@ -185,7 +186,9 @@ actions:
    with `bevy_resvg::prelude`.
 3. Replace all occurences of `Svg` with `SvgFile` (make sure you're doing
    whole-word replacing. You don't want an `SvgFilePlugin`!).
-4. Replace all occurences of `Svg2d` with `Svg`.
+4. Replace all occurences of `Svg2d` with either `Svg` or `UiSvg` (depending on
+   how you're using it). This step requires a bit of care so that you don't use
+   the wrong one!
 
 ## Todos
 
@@ -194,6 +197,7 @@ actions:
 - [ ] Add more examples
 - [ ] Add tests (there are currently none…)
 - [ ] Custom rendering size targets (not dependent on `viewBox` value) <a id="custom-render-size"></a>
+- [x] UI rendering
 - [ ] Expand [comparison table](#comparison-between-bevy-resvg-bevy_svg-and-bevy-vello)
   - [ ] Particularly, add performance comparisons
 - [x] Handle more

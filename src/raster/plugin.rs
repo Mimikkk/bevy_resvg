@@ -3,6 +3,7 @@ use crate::raster::{
     component::{Svg, UiSvg},
 };
 use bevy::prelude::*;
+use std::collections::HashSet;
 
 /// The [`Plugin`] for initialising the
 /// [Rasterised](https://en.wikipedia.org/wiki/Raster_graphics)
@@ -32,7 +33,7 @@ macro_rules! read_events {
         $svg_events.read().filter_map(|event| match event {
             $($asset_event { id } => Some(*id)),+,
             _ => None,
-        }).collect::<Vec<_>>()
+        }).collect::<HashSet<_>>()
     };
 }
 

@@ -26,13 +26,20 @@ body = """
                 {{ commit.body }}\
             {% endif %}\
             {% if commit.footers %}\n
-                | Footer | Value |
-                | -- | -- |
+                <table>
+                    <tr>
+                        <th>Token</th>
+                        <th>Value</th>
+                    </tr>
             {% endif %}\
             {% for footer in commit.footers %}\
-                | {{ footer.token }} | {{ footer.value }} |
+                <tr>
+                    <td>{{ footer.token }}</td>
+                    <td>{{ footer.value }}</td>
+                </tr>
             {% endfor %}\
             {% if commit.footers %}
+                </table>
             {% endif %}\
     {% endfor %}\
 {% endfor %}

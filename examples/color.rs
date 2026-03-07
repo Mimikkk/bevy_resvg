@@ -1,0 +1,15 @@
+use bevy::{color::palettes::css::RED, prelude::*};
+use bevy_resvg::prelude::*;
+
+fn main() {
+    App::new()
+        .add_plugins((DefaultPlugins, SvgPlugin))
+        .add_systems(Startup, setup)
+        .run();
+}
+
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+    let svg: Handle<SvgFile> = asset_server.load("transparent.svg");
+    commands.spawn(Camera2d);
+    commands.spawn((Svg(svg), SvgColor(Color::Srgba(RED))));
+}

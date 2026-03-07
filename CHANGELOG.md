@@ -1,10 +1,26 @@
 # Changelog
 
+## [UNRELEASED]
+
+### Features
+
+1. Add colour tinting support
+
+Parts taken from [生于斯](https://github.com/shengyusi-SYS)'s
+[fork of this repository](https://github.com/shengyusi-SYS/bevy_svg_ui)
+
+### Documentation
+
+1. *(examples)* Add color examples
+2. *(README)* Update `README.md` for new examples
+3. *(README,style)* Remove `.rs` from example list
+
 ## [2.0.0] - 2026-03-07
 
 ### Features
 
-1. Explicitly state which files are supported2. Add SVG type for UI rendering
+1. Explicitly state which files are supported
+2. Add SVG type for UI rendering
 
 ### Bugfixes
 
@@ -16,11 +32,21 @@
 - Properly handle the `Modified` event, which didn't actually update the
   `Sprite before`
 
-| Footer | Value |
-| -- | -- |
-| NOTE | `Added` isn't actually handled, but it isn't supposed to either.
-We react to `LoadedWithDependencies` instead. |
-| Fix | #1 |
+<table>
+<tr>
+<th>Token</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>NOTE</td>
+<td>`Added` isn't actually handled, but it isn't supposed to either.
+We react to `LoadedWithDependencies` instead.</td>
+</tr>
+<tr>
+<td>Fix</td>
+<td>#1</td>
+</tr>
+</table>
 
 2. *(README)* Correct factual error about bevy_svg
 
@@ -30,28 +56,47 @@ We react to `LoadedWithDependencies` instead. |
 
 ### Documentation
 
-1. Check off more `AssetEvent`s on todo-list2. Update status for `bevy_svg`3. Update our support for hot-reloading4. Add comparison with Bevy Vello
+1. Check off more `AssetEvent`s on todo-list
+2. Update status for `bevy_svg`
+3. Update our support for hot-reloading
+4. Add comparison with Bevy Vello
 
-| Footer | Value |
-| -- | -- |
-| Link | https://github.com/linebender/bevy_vello |
+<table>
+<tr>
+<th>Token</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Link</td>
+<td>https://github.com/linebender/bevy_vello</td>
+</tr>
+</table>
 
-5. Add JIT to Todo list6. Include note about Inkscape SVGs7. Add UI example8. *(README)* Update `README.md` to mention UI9. *(spelling)* Fix spelling mistake in doccomment
+5. Add JIT to Todo list
+6. Include note about Inkscape SVGs
+7. Add UI example
+8. *(README)* Update `README.md` to mention UI
+9. *(spelling)* Fix spelling mistake in doccomment
 
 ### Performance
 
 1. Use `HashSet` instead of `Vec` for events
 
 `HashSet`s are supposedly faster than `Vec`s for `contain` calls,
-although I haven't actually tested it.2. Check if asset id list is empty before loop
+although I haven't actually tested it.
+2. Check if asset id list is empty before loop
 
 ### Styling
 
-1. *(sumi)* Sort allowed types array2. *(README)* Fix hard-wrapping in README
+1. *(sumi)* Sort allowed types array
+2. *(README)* Fix hard-wrapping in README
 
 ### Miscellaneous Tasks
 
-1. *(sumi)* Add `merge` as commit type2. Add `debug` as bevy dev feature3. Enable default features for bevy dev builds4. Add helper event function
+1. *(sumi)* Add `merge` as commit type
+2. Add `debug` as bevy dev feature
+3. Enable default features for bevy dev builds
+4. Add helper event function
 
 ## [1.0.1] - 2026-01-24
 
@@ -65,21 +110,36 @@ although I haven't actually tested it.2. Check if asset id list is empty before 
 
 ### Documentation
 
-1. Add badges2. Clarify how SLoC is counted3. Add documentation for each SvgError variant4. Update SLoC count
+1. Add badges
+2. Clarify how SLoC is counted
+3. Add documentation for each SvgError variant
+4. Update SLoC count
 
 ### Styling
 
-1. Make clippy like my `README.md` file2. Remove superfluous `default` call in zoom
+1. Make clippy like my `README.md` file
+2. Remove superfluous `default` call in zoom
 
 ### Miscellaneous Tasks
 
-1. Restrict visibility of internal method2. Add git-cliff3. Exclude `cliff.toml` file4. Configure git-cliff5. Exclude `release.toml` file6. Don't put chore(release) in `CHANGELOG.md`
+1. Restrict visibility of internal method
+2. Add git-cliff
+3. Exclude `cliff.toml` file
+4. Configure git-cliff
+5. Exclude `release.toml` file
+6. Don't put chore(release) in `CHANGELOG.md`
 
 ## [1.0.0] - 2026-01-24
 
 ### Features
 
-1. Create a boilerplate SVG-loading plugin2. Add initial working version3. Relax dependencies4. Warn when unimplemented events are emitted5. Make internal types private6. Add example for what happens when you zoom7. Add prelude
+1. Create a boilerplate SVG-loading plugin
+2. Add initial working version
+3. Relax dependencies
+4. Warn when unimplemented events are emitted
+5. Make internal types private
+6. Add example for what happens when you zoom
+7. Add prelude
 
 ### Refactor
 
@@ -87,12 +147,22 @@ although I haven't actually tested it.2. Check if asset id list is empty before 
 
 ### Documentation
 
-1. Document code2. Rewrite documentation to remove dead links3. Add `CONTRIBUTING.md`4. Add content to `README.md`5. Add migration guide from bevy_svg6. Remove unsupported angle brackets for links
+1. Document code
+2. Rewrite documentation to remove dead links
+3. Add `CONTRIBUTING.md`
+4. Add content to `README.md`
+5. Add migration guide from bevy_svg
+6. Remove unsupported angle brackets for links
 
 ### Styling
 
-1. *(Cargo.toml)* Sort `package` field2. Sort `description` field3. Sort `exclude` field
+1. *(Cargo.toml)* Sort `package` field
+2. Sort `description` field
+3. Sort `exclude` field
 
 ### Miscellaneous Tasks
 
-1. Initial commit2. Release version 1.0.03. Add categories, keywords and a description4. Exclude `sumi.toml` file from <crates.io>
+1. Initial commit
+2. Release version 1.0.0
+3. Add categories, keywords and a description
+4. Exclude `sumi.toml` file from <crates.io>

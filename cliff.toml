@@ -12,20 +12,23 @@ header = """
 # See https://keats.github.io/tera/docs/#introduction
 body = """
 {% if version %}
-    ## [{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }}\
+    ## [{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }}
 {% else %}
-    ## [UNRELEASED]\
+    ## [UNRELEASED]
 {% endif %}\
 {% for group, commits in commits | group_by(attribute="group") %}
-    \n### {{ group | striptags | trim | upper_first }}\n
+    ### {{ group | striptags }}
+
     {% for commit in commits %}\
         {{ loop.index }}. {% if commit.scope %}*({{ commit.scope }})* {% endif %}\
             {% if commit.breaking %}[*BREAKING*] {% endif %}\
             {{ commit.message | upper_first }}\
-            {% if commit.body %}\n
+            {% if commit.body %}
+
                 {{ commit.body }}\
             {% endif %}\
-            {% if commit.footers %}\n
+            {% if commit.footers %}
+                
                 <table>
                     <tr>
                         <th>Token</th>
@@ -38,12 +41,11 @@ body = """
                     <td>{{ footer.value }}</td>
                 </tr>
             {% endfor %}\
-            {% if commit.footers %}
+            {% if commit.footers %}\
                 </table>
-            {% endif %}\
+            {% endif %}
     {% endfor %}\
 {% endfor %}
-
 """
 # Remove leading and trailing whitespaces from the changelog's body.
 trim = true

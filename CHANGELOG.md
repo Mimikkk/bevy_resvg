@@ -1,14 +1,22 @@
 # Changelog
 
-## [UNRELEASED]
+## [2.2.0] - 2026-03-07
+
+### Features
+
+1. Add target render size
 
 ### Documentation
 
 1. *(release)* Don't skip any proper commits
+2. *(release)* Correct whitespace in changelog
+3. Update SLoC and complexity count
 
 ### Miscellaneous Tasks
 
 1. *(sumi)* Add `revert` as commit type
+2. Temporary commit
+3. *(deps)* Don't require patch version
 
 ### Revert
 

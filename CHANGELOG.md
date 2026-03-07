@@ -1,5 +1,30 @@
 # Changelog
 
+## [UNRELEASED]
+
+### Documentation
+
+1. *(release)* Don't skip any proper commits
+
+### Miscellaneous Tasks
+
+1. *(sumi)* Add `revert` as commit type
+
+### Revert
+
+1. Chore: don't put chore(release) in `CHANGELOG.md`
+
+<table>
+<tr>
+<th>Token</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Refs</td>
+<td>a2c0f9d5fbd28edd84d6f2fe2e2718f05bd1bb6a</td>
+</tr>
+</table>
+
 ## [2.1.0] - 2026-03-07
 
 ### Features
@@ -14,6 +39,17 @@ Parts taken from [生于斯](https://github.com/shengyusi-SYS)'s
 1. *(examples)* Add color examples
 2. *(README)* Update `README.md` for new examples
 3. *(README,style)* Remove `.rs` from example list
+4. *(release)* Use html table instead of md table
+
+Markdown tables break when the value is multi-line. `HTML` tables do
+not.
+
+5. *(release)* Simplify whitespace
+6. *(release)* Update `CHANGELOG.md` to new format
+
+### Miscellaneous Tasks
+
+1. *(release)* V2.1.0
 
 ## [2.0.0] - 2026-03-07
 
@@ -77,6 +113,8 @@ We react to `LoadedWithDependencies` instead.</td>
 7. Add UI example
 8. *(README)* Update `README.md` to mention UI
 9. *(spelling)* Fix spelling mistake in doccomment
+10. *(release)* Don't use h4
+11. *(release)* Update `CHANGELOG.md` format
 
 ### Performance
 
@@ -84,6 +122,7 @@ We react to `LoadedWithDependencies` instead.</td>
 
 `HashSet`s are supposedly faster than `Vec`s for `contain` calls,
 although I haven't actually tested it.
+
 2. Check if asset id list is empty before loop
 
 ### Styling
@@ -94,9 +133,14 @@ although I haven't actually tested it.
 ### Miscellaneous Tasks
 
 1. *(sumi)* Add `merge` as commit type
-2. Add `debug` as bevy dev feature
-3. Enable default features for bevy dev builds
-4. Add helper event function
+2. *(deps)* Bump dependencies
+3. *(deps)* Don't require patch version
+4. Add `debug` as bevy dev feature
+5. Enable default features for bevy dev builds
+6. Add helper event function
+7. *(release)* Ignore non-conventional commits
+8. *(release)* Create release script
+9. *(release)* V2.0.0
 
 ## [1.0.1] - 2026-01-24
 
@@ -114,6 +158,8 @@ although I haven't actually tested it.
 2. Clarify how SLoC is counted
 3. Add documentation for each SvgError variant
 4. Update SLoC count
+5. *(release)* Create changelog for v1.0.0
+6. *(release)* Update `CHANGELOG.md` for 1.0.1
 
 ### Styling
 
@@ -126,8 +172,10 @@ although I haven't actually tested it.
 2. Add git-cliff
 3. Exclude `cliff.toml` file
 4. Configure git-cliff
-5. Exclude `release.toml` file
-6. Don't put chore(release) in `CHANGELOG.md`
+5. *(release)* Add `release.toml` file
+6. Exclude `release.toml` file
+7. *(release)* Add more release configurations
+8. Don't put chore(release) in `CHANGELOG.md`
 
 ## [1.0.0] - 2026-01-24
 

@@ -1,5 +1,7 @@
 #![doc = include_str!("../README.md")]
 
+/// Runtime modification of [`SVG`](https://en.wikipedia.org/wiki/SVG) files.
+pub mod effects;
 /// Error utilities for this crate.
 pub mod error;
 /// The [`Plugin`](bevy::app::Plugin) for initialising the Bevy logic an

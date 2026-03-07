@@ -1,6 +1,9 @@
-use crate::raster::{
-    asset::{SvgFile, loader::SvgFileLoader},
-    component::{Svg, UiSvg},
+use crate::{
+    effects::components::SvgColor,
+    raster::{
+        asset::{SvgFile, loader::SvgFileLoader},
+        component::{Svg, UiSvg},
+    },
 };
 use bevy::prelude::*;
 use std::collections::HashSet;
@@ -23,6 +26,8 @@ impl Plugin for SvgRasterPlugin {
                     handle_ui_svg_loaded,
                     handle_ui_svg_modified,
                     handle_ui_svg_removed,
+                    sync_svg_color_changes,
+                    sync_removed_svg_color,
                 ),
             );
     }
@@ -86,22 +91,24 @@ fn handle_svg_loaded(
     mut svg_events: MessageReader<AssetEvent<SvgFile>>,
     svg_assets: Res<Assets<SvgFile>>,
     mut images: ResMut<Assets<Image>>,
-    query: Query<(Entity, &Svg), Without<Sprite>>,
+    query: Query<(Entity, &Svg, Option<&SvgColor>), Without<Sprite>>,
 ) {
     let loaded_ids = read_events!(svg_events, AssetEvent::LoadedWithDependencies);
-    if loaded_ids.is_empty() {
-        return;
-    }
 
-    for (entity, svg) in &query {
+    for (entity, svg, svg_color) in &query {
         let id = svg.0.id();
         if loaded_ids.contains(&id)
             && let Some(image_handle) = new_image_from_svg(id, &svg_assets, &mut images)
         {
-            commands
-                .entity(entity)
-                .insert(Sprite::from_image(image_handle));
+            commands.entity(entity).insert(Sprite {
+                image: image_handle,
+                color: svg_color.copied().unwrap_or_default().0,
+                ..default()
+            });
             debug!("Added `Sprite` for `{id}` to entity {entity:?}");
+            if let Some(svg_color) = svg_color {
+                info!("`Svg` entity {entity:?} has `SvgColor`: {:?}", svg_color.0);
+            }
         }
     }
 }
@@ -113,17 +120,17 @@ fn handle_svg_modified(
     mut svg_events: MessageReader<AssetEvent<SvgFile>>,
     svg_assets: Res<Assets<SvgFile>>,
     mut images: ResMut<Assets<Image>>,
-    mut query: Query<(&Svg, &mut Sprite)>,
+    mut query: Query<(&Svg, &mut Sprite, Option<&SvgColor>)>,
 ) {
     let modified_ids = read_events!(svg_events, AssetEvent::Modified);
-    if modified_ids.is_empty() {
-        return;
-    }
 
-    for (svg, mut sprite) in &mut query {
+    for (svg, mut sprite, svg_color) in &mut query {
         let id = svg.0.id();
         if modified_ids.contains(&id) {
             sync_existing_image_from_svg(id, &svg_assets, &mut images, &mut sprite.image);
+            if let Some(svg_color) = svg_color {
+                info!("`Svg` asset `{id}` uses `SvgColor`: {:?}", svg_color.0);
+            }
         }
     }
 }
@@ -136,19 +143,21 @@ fn handle_svg_modified(
 fn handle_svg_removed(
     mut commands: Commands,
     mut svg_events: MessageReader<AssetEvent<SvgFile>>,
-    query: Query<(Entity, &Svg), With<Sprite>>,
+    query: Query<(Entity, &Svg, Option<&SvgColor>), With<Sprite>>,
 ) {
     let removed_ids = read_events!(svg_events, AssetEvent::Removed | AssetEvent::Unused);
 
-    if removed_ids.is_empty() {
-        return;
-    }
-
-    for (entity, svg) in query {
+    for (entity, svg, svg_color) in query {
         let id = svg.0.id();
         if removed_ids.contains(&id) {
             commands.entity(entity).remove::<Sprite>();
             info!("Removed `Sprite` for `{id}` from entity {entity:?}");
+            if let Some(svg_color) = svg_color {
+                info!(
+                    "Removed `Svg` entity {entity:?} had `SvgColor`: {:?}",
+                    svg_color.0
+                );
+            }
         }
     }
 }
@@ -161,21 +170,27 @@ fn handle_ui_svg_loaded(
     mut svg_events: MessageReader<AssetEvent<SvgFile>>,
     svg_assets: Res<Assets<SvgFile>>,
     mut images: ResMut<Assets<Image>>,
-    query: Query<(Entity, &UiSvg), Without<ImageNode>>,
+    query: Query<(Entity, &UiSvg, Option<&SvgColor>), Without<ImageNode>>,
 ) {
     let loaded_ids = read_events!(svg_events, AssetEvent::LoadedWithDependencies);
 
-    if loaded_ids.is_empty() {
-        return;
-    }
-
-    for (entity, svg) in &query {
+    for (entity, svg, svg_color) in &query {
         let id = svg.0.id();
         if loaded_ids.contains(&id)
             && let Some(image_handle) = new_image_from_svg(id, &svg_assets, &mut images)
         {
-            commands.entity(entity).insert(ImageNode::new(image_handle));
+            commands.entity(entity).insert(ImageNode {
+                image: image_handle,
+                color: svg_color.copied().unwrap_or_default().0,
+                ..default()
+            });
             debug!("Added `ImageNode` for `{id}` to entity {entity:?}");
+            if let Some(svg_color) = svg_color {
+                info!(
+                    "`UiSvg` entity {entity:?} has `SvgColor`: {:?}",
+                    svg_color.0
+                );
+            }
         }
     }
 }
@@ -186,18 +201,17 @@ fn handle_ui_svg_modified(
     mut svg_events: MessageReader<AssetEvent<SvgFile>>,
     svg_assets: Res<Assets<SvgFile>>,
     mut images: ResMut<Assets<Image>>,
-    mut query: Query<(&UiSvg, &mut ImageNode)>,
+    mut query: Query<(&UiSvg, &mut ImageNode, Option<&SvgColor>)>,
 ) {
     let modified_ids = read_events!(svg_events, AssetEvent::Modified);
 
-    if modified_ids.is_empty() {
-        return;
-    }
-
-    for (svg, mut image_node) in &mut query {
+    for (svg, mut image_node, svg_color) in &mut query {
         let id = svg.0.id();
         if modified_ids.contains(&id) {
             sync_existing_image_from_svg(id, &svg_assets, &mut images, &mut image_node.image);
+            if let Some(svg_color) = svg_color {
+                info!("`UiSvg` asset `{id}` uses `SvgColor`: {:?}", svg_color.0);
+            }
         }
     }
 }
@@ -212,15 +226,41 @@ fn handle_ui_svg_removed(
 ) {
     let removed_ids = read_events!(svg_events, AssetEvent::Removed | AssetEvent::Unused);
 
-    if removed_ids.is_empty() {
-        return;
-    }
-
     for (entity, svg) in query {
         let id = svg.0.id();
         if removed_ids.contains(&id) {
             commands.entity(entity).remove::<ImageNode>();
             info!("Removed `ImageNode` for `{id}` from entity {entity:?}");
+        }
+    }
+}
+
+/// Applies runtime [`SvgColor`] changes to already-inserted render components.
+fn sync_svg_color_changes(
+    mut svg_query: Query<(&SvgColor, &mut Sprite), (With<Svg>, Changed<SvgColor>)>,
+    mut ui_svg_query: Query<(&SvgColor, &mut ImageNode), (With<UiSvg>, Changed<SvgColor>)>,
+) {
+    for (svg_color, mut sprite) in &mut svg_query {
+        sprite.color = svg_color.0;
+    }
+
+    for (svg_color, mut image_node) in &mut ui_svg_query {
+        image_node.color = svg_color.0;
+    }
+}
+
+/// Resets tint when [`SvgColor`] is removed from an entity.
+fn sync_removed_svg_color(
+    mut removed_svg_colors: RemovedComponents<SvgColor>,
+    mut svg_query: Query<&mut Sprite, With<Svg>>,
+    mut ui_svg_query: Query<&mut ImageNode, With<UiSvg>>,
+) {
+    for entity in removed_svg_colors.read() {
+        if let Ok(mut sprite) = svg_query.get_mut(entity) {
+            sprite.color = default();
+        }
+        if let Ok(mut image_node) = ui_svg_query.get_mut(entity) {
+            image_node.color = default();
         }
     }
 }

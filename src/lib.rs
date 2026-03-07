@@ -4,7 +4,7 @@
 pub mod effects;
 /// Error utilities for this crate.
 pub mod error;
-/// The [`Plugin`](bevy::app::Plugin) for initialising the Bevy logic an
+/// The [`Plugin`](bevy::app::Plugin) for initialising the Bevy logic and
 /// configuration provided by this crate.
 pub mod plugin;
 /// Import this module as `use bevy_resvg::prelude::*` to get convenient

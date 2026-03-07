@@ -22,7 +22,7 @@ Funnily enough, I'm actually publishing this crate onto
 ([January 24th](https://github.com/Weasy666/bevy_svg/commit/b4d9041))!
 
 **Bevy Resvg** takes a completely different approach to rendering SVGs compared
-to `bevy_svg`. Instead of tesselating the SVG into a mesh, it first renders the
+to `bevy_svg`. Instead of tessellating the SVG into a mesh, it first renders the
 SVG as a raster image using the [Resvg](https://github.com/linebender/resvg)
 library.
 
@@ -50,7 +50,7 @@ Here's a complete comparison between the three:
 | Source Lines of Code      | 🔽 |                               727[^1] | 🔼 |        1904[^1][^2] | ⏫ |                    6361[^1][^3]    |  
 | Code Complexity           | 😀 |                                49[^1] | 😵‍💫 |         145[^1][^2] | 😵 |                     409[^1][^3]    |
 | Hot-reloading of SVGs     | ✅ | Supported                             | ✅ | Supported           | ❌ | Unsupported                        |
-| Changing runtime color    | ✅ | Supported                             | ❌ | Unsupported         | ❌ | Unsupported                        |
+| Changing runtime colour   | ✅ | Supported                             | ❌ | Unsupported         | ❌ | Unsupported                        |
 | Gradients                 | ✅ | Supported                             | ❌ | Unsupported         | ⚠️ | Inaccurate                         |
 | Semi-transparency         | ✅ | Supported                             | ❌ | Unsupported         | ✅ | Supported                          |
 | Positioning and sizing    | ✅ | Native (`Sprite` & `ImageNode`-based) | ❌ | Janky and imprecise | ✅ | Native (`Image`-based)             |
@@ -59,7 +59,7 @@ Here's a complete comparison between the three:
 | Rendered quality (zoomed) | ❌ | Blurry and Pixelated                  | ✅ | Crisp               | ✅ | Crisp                              |
 | 3D-Rendering              | ❌ | Unsupported                           | ✅ | Supported           | ✅ | Supported                          |
 | Animated SVGs             | ❌ | Unsupported                           | ❌ | Unsupported         | ❌ | Unsupported                        |
-| Approach                  | 🖼️ | Rasterisation (once)                  | 🔺 | Tesselation         | ⚙️ | Rasterisation (JIT every frame)    |
+| Approach                  | 🖼️ | Rasterisation (once)                  | 🔺 | Tessellation        | ⚙️ | Rasterisation (JIT every frame)    |
 | Output                    | 🏃‍➡️ | `Sprite` (2D) or `ImageNode` (UI)     | 🕸  | `Mesh2d`            | 🔀 | `Mesh2d` with image-based texture  |
 | Licence                   | 🟰 | MIT OR Apache-2.0                     | 🟰 | MIT OR Apache-2.0   | 🟰 | MIT OR Apache-2.0                  |
 
@@ -88,7 +88,7 @@ then check out some of the longer explanations below.
 ### When to use Bevy Resvg over `bevy_svg`
 
 Although I am very proud of this small little crate (it's my first ever library
-to be published on [crates.io](https://crates.io/)!, I do realise that there are
+to be published on [crates.io](https://crates.io/))!, I do realise that there are
 situations in which `bevy_svg` simply makes more sense.
 
 For starters, Bevy Resvg is a very young and immature project. If
@@ -105,7 +105,7 @@ Furthermore, if your game is dependent on zooming into the SVGs,
 rasterisation once, mimicking the behaviour of e.g. the
 [Godot Engine](https://forum.godotengine.org/t/how-to-make-svg-not-pixelated/92365).
 This has the unfortunate side-effect of causing blurry images when zooming in.
-`bevy_svg`, however, tesselates the SVGs into a crisp Mesh2d, which results in
+`bevy_svg`, however, tessellates the SVGs into a crisp `Mesh2d`, which results in
 sharper rendering when zoomed in.
 
 If you wish to mitigate the blur, you can set a custom target render size via
@@ -137,7 +137,7 @@ Although you should not ship Inkscape-generated SVGs in your released game, it
 can be beneficial to not have to export your SVGs as standard SVGs from Inkscape
 each time you want to test a new design.
 
-### When to use bevy Resvg over Bevy Vello
+### When to use Bevy Resvg over Bevy Vello
 
 To be written…
 
@@ -167,7 +167,7 @@ Currently, the only examples are:
 - [`custom_size`](./examples/custom_size.rs): shows how to render an SVG to a
   custom target size
 - [`simple`](./examples/simple.rs): shows the most basic usage of Bevy Resvg
-- [`ui`](./examples/ui.rs): shows how to render `UiSvg`'s in UI nodes
+- [`ui`](./examples/ui.rs): shows how to render `UiSvg`s in UI nodes
 - [`zoom`](./examples/zoom.rs): shows what happens when you zoom too far into
   an SVG
 
@@ -204,9 +204,9 @@ actions:
 1. Run `cargo remove bevy_svg` and `cargo add bevy_resvg`.
 2. If you were just using `bevy_svg::prelude` in your code, simply replace it
    with `bevy_resvg::prelude`.
-3. Replace all occurences of `Svg` with `SvgFile` (make sure you're doing
+3. Replace all occurrences of `Svg` with `SvgFile` (make sure you're doing
    whole-word replacing. You don't want an `SvgFilePlugin`!).
-4. Replace all occurences of `Svg2d` with either `Svg` or `UiSvg` (depending on
+4. Replace all occurrences of `Svg2d` with either `Svg` or `UiSvg` (depending on
    how you're using it). This step requires a bit of care so that you don't use
    the wrong one!
 

@@ -47,7 +47,7 @@ impl SvgVectorAsset {
     ///
     /// If the [`TargetRenderSize`] has a value higher than 2^24 on any axis, it
     /// will be rounded to the nearest power of 2. This is due to [`f32`] having
-    /// a 23-bit mantissa, which can not fit the 32-bit [`u32`]'s in them.
+    /// a 23-bit mantissa, which cannot fit the 32-bit [`u32`]'s in them.
     ///
     /// ## Errors
     ///

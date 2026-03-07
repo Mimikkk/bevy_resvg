@@ -7,6 +7,6 @@ use bevy::prelude::*;
 pub struct Svg(pub Handle<SvgFile>);
 
 /// The [`Component`] that one needs to wrap [`SvgFile`]s in before
-/// using them in Bevy UI's.
+/// using them in Bevy UIs.
 #[derive(Component, Default)]
 pub struct UiSvg(pub Handle<SvgFile>);

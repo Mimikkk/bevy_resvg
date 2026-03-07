@@ -26,9 +26,10 @@ body = """
             {% if commit.body %}
 
                 {{ commit.body }}\
+                {% if not loop.last %}\n{% endif %}\
             {% endif %}\
             {% if commit.footers %}
-                
+                {% if not commit.body %}\n{% endif %}\
                 <table>
                     <tr>
                         <th>Token</th>
@@ -42,7 +43,8 @@ body = """
                 </tr>
             {% endfor %}\
             {% if commit.footers %}\
-                </table>
+                </table>\
+                {% if not loop.last %}\n{% endif %}\
             {% endif %}
     {% endfor %}\
 {% endfor %}

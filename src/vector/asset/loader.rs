@@ -1,4 +1,4 @@
-use crate::{error::SvgError, vector::asset::SvgVectorAsset};
+use crate::{error::SvgError, prelude::SvgFileLoaderSettings, vector::asset::SvgVectorAsset};
 use bevy::{
     asset::{AssetLoader, LoadContext, io::Reader},
     prelude::*,
@@ -15,7 +15,7 @@ pub struct SvgVectorAssetLoader;
 
 impl AssetLoader for SvgVectorAssetLoader {
     type Asset = SvgVectorAsset;
-    type Settings = ();
+    type Settings = SvgFileLoaderSettings;
     type Error = SvgError;
 
     fn load(

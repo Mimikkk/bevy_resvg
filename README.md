@@ -101,13 +101,17 @@ Bevy Resvg, yet. Don't worry, it's on the [Todo-list](#todos)! In the meantime,
 check out `bevy_svg` if you need to render to a 3D object.
 
 Furthermore, if your game is dependent on zooming into the SVGs,
-`bevy_svg` might fit your needs better (particularly until [custom render size
-target support](#custom-render-size) is added). Bevy Resvg only performs
+`bevy_svg` might fit your needs better. Bevy Resvg only performs
 rasterisation once, mimicking the behaviour of e.g. the
 [Godot Engine](https://forum.godotengine.org/t/how-to-make-svg-not-pixelated/92365).
 This has the unfortunate side-effect of causing blurry images when zooming in.
 `bevy_svg`, however, tesselates the SVGs into a crisp Mesh2d, which results in
 sharper rendering when zoomed in.
+
+If you wish to mitigate the blur, you can set a custom target render size via
+`SvgFileLoaderSettings::target_render_size`. This allows you to render a larger
+image up front. However, this has the caveat of requiring you to manually
+determine how far a user is likely to zoom in on your SVGs.
 
 However, if you are in need of rendering semi-transparent SVGs, then Bevy Resvg
 is your only option (to my knowledge). Perhaps you even want to change the
@@ -158,6 +162,10 @@ Currently, the only examples are:
   tint to a `UiSvg`
 - [`color`](./examples/color.rs): shows how to apply a static colour tint to
   an `Svg`
+- [`custom_aspect_ratio`](./examples/custom_aspect_ratio.rs): shows how to
+  render an SVG to a custom target size with a non-native aspect ratio
+- [`custom_size`](./examples/custom_size.rs): shows how to render an SVG to a
+  custom target size
 - [`simple`](./examples/simple.rs): shows the most basic usage of Bevy Resvg
 - [`ui`](./examples/ui.rs): shows how to render `UiSvg`'s in UI nodes
 - [`zoom`](./examples/zoom.rs): shows what happens when you zoom too far into
@@ -208,7 +216,7 @@ actions:
 - [ ] JIT support! (because it's cool, I doubt that it is performant lol)
 - [ ] Add more examples
 - [ ] Add tests (there are currently none…)
-- [ ] Custom rendering size targets (not dependent on `viewBox` value) <a id="custom-render-size"></a>
+- [x] Custom rendering size targets (not dependent on `viewBox` value) <a id="custom-render-size"></a>
 - [x] UI rendering
 - [ ] Expand [comparison table](#comparison-between-bevy-resvg-bevy_svg-and-bevy-vello)
   - [ ] Particularly, add performance comparisons

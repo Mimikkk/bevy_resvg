@@ -1,7 +1,10 @@
 /// The [`AssetLoader`](bevy::asset::AssetLoader) for [`SvgVectorAsset`]s.
 pub mod loader;
 
-use crate::error::{Result, SvgError};
+use crate::{
+    error::{Result, SvgError},
+    settings::TargetRenderSize,
+};
 use bevy::{
     asset::RenderAssetUsages,
     prelude::*,
@@ -19,49 +22,77 @@ use resvg::{
 #[derive(TypePath, Asset)]
 pub struct SvgVectorAsset(pub Tree);
 
+impl From<&SvgVectorAsset> for TargetRenderSize {
+    fn from(value: &SvgVectorAsset) -> Self {
+        let (width, height) = value.0.size().to_int_size().dimensions();
+        Self { width, height }
+    }
+}
+
+impl From<TargetRenderSize> for Extent3d {
+    fn from(value: TargetRenderSize) -> Self {
+        Self {
+            width: value.width,
+            height: value.height,
+            depth_or_array_layers: 1,
+        }
+    }
+}
+
 impl SvgVectorAsset {
     /// Renders and rasterises an [`SvgVectorAsset`] containing a [`Tree`] into
     /// a [`Pixmap`] using [`resvg`]'s [`render`](resvg::render) function.
     ///
-    /// The rendered [`Pixmap`] is the same size as the SVG file's
-    /// [`viewBox`](https://svgwg.org/svg2-draft/coords.html#ViewBoxAttribute).
-    /// However, this may change in the future to allow higher-quality
-    /// rasterisation of the SVG files.
+    /// ## Precision loss
+    ///
+    /// If the [`TargetRenderSize`] has a value higher than 2^24 on any axis, it
+    /// will be rounded to the nearest power of 2. This is due to [`f32`] having
+    /// a 23-bit mantissa, which can not fit the 32-bit [`u32`]'s in them.
     ///
     /// ## Errors
     ///
-    /// The `viewBox` *must not* be 0 on any axis. If this invariant is broken,
-    /// then this function will return an [`SvgError::Empty`].
-    fn render(&self) -> Result<Pixmap> {
-        let (width, height) = self.0.size().to_int_size().dimensions();
+    /// The `TargetRenderSize` *must not* be 0 on any axis. If this invariant is
+    /// broken, then this function will return an [`SvgError::Empty`].
+    fn render(&self, size: TargetRenderSize) -> Result<Pixmap> {
+        let TargetRenderSize { width, height } = size;
         let mut buf = Pixmap::new(width, height).ok_or(SvgError::Empty)?;
 
-        resvg::render(&self.0, Transform::default(), &mut buf.as_mut());
+        let original_size = self.0.size();
+        let (original_width, original_height) = (original_size.width(), original_size.height());
+
+        #[allow(clippy::cast_precision_loss)] // See ## Precision loss
+        let (scale_x, scale_y) = (
+            width as f32 / original_width,
+            height as f32 / original_height,
+        );
+
+        let transform = Transform::from_scale(scale_x, scale_y);
+
+        resvg::render(&self.0, transform, &mut buf.as_mut());
         Ok(buf)
     }
 
     /// Renders and rasterises an [`SvgVectorAsset`] containing a [`Tree`] into
     /// an [`Image`] using the [`render`](Self::render) method.
     ///
-    /// The rendered [`Image`] is the same size as the SVG file's
+    /// If `size` is set to `None`, then the `Size` will be set to the SVG
+    /// file's
     /// [`viewBox`](https://svgwg.org/svg2-draft/coords.html#ViewBoxAttribute).
-    /// However, this may change in the future to allow higher-quality
-    /// rasterisation of the SVG files.
     ///
     /// ## Errors
     ///
-    /// The `viewBox` *must not* be 0 on any axis. If this invariant is broken,
-    /// then this function will return an [`SvgError::Empty`].
-    pub fn render_to_image(&self, asset_usage: RenderAssetUsages) -> Result<Image> {
-        let pixmap = self.render()?;
-        let (width, height) = self.0.size().to_int_size().dimensions();
-        let size = Extent3d {
-            width,
-            height,
-            depth_or_array_layers: 1,
-        };
+    /// The `TargetRenderSize` (or `viewBox`, if `None`) *must not* be 0 on any
+    /// axis. If this invariant is broken, then this function will return an
+    /// [`SvgError::Empty`].
+    pub fn render_to_image(
+        &self,
+        size: Option<TargetRenderSize>,
+        asset_usage: RenderAssetUsages,
+    ) -> Result<Image> {
+        let size = size.unwrap_or_else(|| TargetRenderSize::from(self));
+        let pixmap = self.render(size)?;
         Ok(Image::new(
-            size,
+            size.into(),
             TextureDimension::D2,
             pixmap.take(),
             TextureFormat::Rgba8Unorm,

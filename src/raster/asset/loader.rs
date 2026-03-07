@@ -1,4 +1,7 @@
-use crate::{error::SvgError, raster::asset::SvgFile, vector::asset::loader::SvgVectorAssetLoader};
+use crate::{
+    error::SvgError, prelude::SvgFileLoaderSettings, raster::asset::SvgFile,
+    vector::asset::loader::SvgVectorAssetLoader,
+};
 use bevy::{
     asset::{AssetLoader, LoadContext, RenderAssetUsages, io::Reader},
     prelude::*,
@@ -17,7 +20,7 @@ pub struct SvgFileLoader;
 
 impl AssetLoader for SvgFileLoader {
     type Asset = SvgFile;
-    type Settings = ();
+    type Settings = SvgFileLoaderSettings;
     type Error = SvgError;
 
     fn load(
@@ -31,7 +34,8 @@ impl AssetLoader for SvgFileLoader {
                 .load(reader, settings, load_context)
                 .await?;
 
-            let image = vector_asset.render_to_image(RenderAssetUsages::default())?;
+            let image = vector_asset
+                .render_to_image(settings.target_render_size, RenderAssetUsages::default())?;
 
             Ok(SvgFile(image))
         })

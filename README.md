@@ -146,21 +146,21 @@ Resvg.
 
 Currently, the only examples are:
 
-- [`color_change.rs`](./examples/color_change.rs): shows how to update the
+- [`color_change`](./examples/color_change.rs): shows how to update the
   colour tint of an `Svg` when an event (spacebar pressed) occurs
-- [`color_hue_tween.rs`](./examples/color_hue_tween.rs): showcase of an `Svg`
+- [`color_hue_tween`](./examples/color_hue_tween.rs): showcase of an `Svg`
   that continuously tweens through all hues
-- [`color_ui_change.rs`](./examples/color_ui_change.rs): shows how to update the
+- [`color_ui_change`](./examples/color_ui_change.rs): shows how to update the
   colour tint of a `UiSvg` when an event (spacebar pressed) occurs
-- [`color_ui_hue_tween.rs`](./examples/color_ui_hue_tween.rs): showcase of an
+- [`color_ui_hue_tween`](./examples/color_ui_hue_tween.rs): showcase of an
   `UiSvg` that continuously tweens through all hues
-- [`color_ui.rs`](./examples/color_ui.rs): shows how to apply a static colour
+- [`color_ui`](./examples/color_ui.rs): shows how to apply a static colour
   tint to a `UiSvg`
-- [`color.rs`](./examples/color.rs): shows how to apply a static colour tint to
+- [`color`](./examples/color.rs): shows how to apply a static colour tint to
   an `Svg`
-- [`simple.rs`](./examples/simple.rs): shows the most basic usage of Bevy Resvg
+- [`simple`](./examples/simple.rs): shows the most basic usage of Bevy Resvg
 - [`ui`](./examples/ui.rs): shows how to render `UiSvg`'s in UI nodes
-- [`zoom.rs`](./examples/zoom.rs): shows what happens when you zoom too far into
+- [`zoom`](./examples/zoom.rs): shows what happens when you zoom too far into
   an SVG
 
 More examples are planned!

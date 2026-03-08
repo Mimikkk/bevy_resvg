@@ -258,9 +258,9 @@ code.
 [`v0.13.0` in `linebender/bevy_vello`](https://github.com/linebender/bevy_vello/tree/v0.13.0)
 because later versions of Bevy Vello refuse to compile on my machine.
 [^4]: The advanced `image_href_resolver`, `font_resolver`, and `fontdb` settings
-are not available due to missing serde support in usvg. If you require changing
-these settings, please use `resvg-option` branch. It's unfortunately not
-released on <crates.io> due to it
+are not available due to missing serde support in `usvg`. If you require
+changing these settings, please use `resvg-option` branch. It's unfortunately
+not released on [crates.io](https://crates.io) due to it
 [`[patch]`ing](https://doc.rust-lang.org/cargo/reference/overriding-dependencies.html#the-patch-section)
 `usvg`, which is
 [not allowed on crates.io](https://github.com/rust-lang/cargo/issues/13222).

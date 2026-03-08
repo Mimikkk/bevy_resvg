@@ -51,6 +51,7 @@ Here's a complete comparison between the three:
 | Code Complexity           | 😀 |                                49[^1] | 😵‍💫 |         145[^1][^2] | 😵 |                     409[^1][^3]    |
 | Hot-reloading of SVGs     | ✅ | Supported                             | ✅ | Supported           | ❌ | Unsupported                        |
 | Changing runtime colour   | ✅ | Supported                             | ❌ | Unsupported         | ❌ | Unsupported                        |
+| Custom CSS injection      | ✅ | Supported                             | ❌ | Unsupported         | ❌ | Unsupported                        |
 | Gradients                 | ✅ | Supported                             | ❌ | Unsupported         | ⚠️ | Inaccurate                         |
 | Semi-transparency         | ✅ | Supported                             | ❌ | Unsupported         | ✅ | Supported                          |
 | Positioning and sizing    | ✅ | Native (`Sprite` & `ImageNode`-based) | ❌ | Janky and imprecise | ✅ | Native (`Image`-based)             |
@@ -163,10 +164,15 @@ Currently, the only examples are:
   tint to a `UiSvg`
 - [`color`](./examples/color.rs): shows how to apply a static colour tint to
   an `Svg`
+- [`crisp_shapes`](./examples/crisp_shapes.rs): shows how to
+  customise `usvg::Options` to render SVGs with crisp edges and with
+  anti-aliasing turned off.
 - [`custom_aspect_ratio`](./examples/custom_aspect_ratio.rs): shows how to
   render an SVG to a custom target size with a non-native aspect ratio
 - [`custom_size`](./examples/custom_size.rs): shows how to render an SVG to a
   custom target size
+- [`custom_style_sheet`](./examples/custom_style_sheet.rs): shows how to
+  customise `usvg::Options` while loading an SVG by setting `style_sheet`
 - [`simple`](./examples/simple.rs): shows the most basic usage of Bevy Resvg
 - [`ui`](./examples/ui.rs): shows how to render `UiSvg`s in UI nodes
 - [`zoom`](./examples/zoom.rs): shows what happens when you zoom too far into
@@ -228,9 +234,9 @@ actions:
   - [x] `Removed`
   - [x] `Unused`
   - [x] `LoadedWithDependencies`
-- [ ] [`usvg::Options`](https://docs.rs/usvg/latest/usvg/struct.Options.html)
+- [x] [`usvg::Options`](https://docs.rs/usvg/latest/usvg/struct.Options.html)
   support [^4]
-  - [ ] CSS support
+  - [x] CSS support
 
 ## Minimum supported Rust version
 
@@ -251,10 +257,13 @@ code.
 [^3]: Based on tagged release
 [`v0.13.0` in `linebender/bevy_vello`](https://github.com/linebender/bevy_vello/tree/v0.13.0)
 because later versions of Bevy Vello refuse to compile on my machine.
-[^4]: Available on the `resvg-option` branch. Not released on Crates.io due to
-it
+[^4]: The advanced `image_href_resolver`, `font_resolver`, and `fontdb` settings
+are not available due to missing serde support in `usvg`. If you require
+changing these settings, please use the `resvg-option` branch. It's
+unfortunately not released on [crates.io](https://crates.io) due to it
 [`[patch]`ing](https://doc.rust-lang.org/cargo/reference/overriding-dependencies.html#the-patch-section)
 `usvg`, which is
 [not allowed on crates.io](https://github.com/rust-lang/cargo/issues/13222).
-If you require using custom `usvg::Options`, please follow the instructions in
+Please follow the instructions in
 [`resvg-option/USAGE.md`](https://github.com/theodorebje/bevy_resvg/blob/resvg-option/USAGE.md)
+to set up `resvg-option`.

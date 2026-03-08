@@ -19,3 +19,5 @@ pub mod settings;
 /// Tools and helpers for loading [`SVG`](https://en.wikipedia.org/wiki/SVG)
 /// files.
 pub(crate) mod vector;
+
+pub use resvg;

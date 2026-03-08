@@ -164,6 +164,9 @@ Currently, the only examples are:
   tint to a `UiSvg`
 - [`color`](./examples/color.rs): shows how to apply a static colour tint to
   an `Svg`
+- [`crisp_shapes`](./examples/crisp_shapes.rs): shows how to
+  customize `usvg::Options` to render SVGs with crisp edges and with
+  anti-aliasing turned off.
 - [`custom_aspect_ratio`](./examples/custom_aspect_ratio.rs): shows how to
   render an SVG to a custom target size with a non-native aspect ratio
 - [`custom_size`](./examples/custom_size.rs): shows how to render an SVG to a

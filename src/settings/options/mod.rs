@@ -75,7 +75,7 @@ options_def! {
         /// Default viewport size to assume if there is no `viewBox` attribute and
         /// the `width` or `height` attributes are relative.
         ///
-        /// Default: `(100, 100)`
+        /// Default: `(100., 100.)`
         #[serde(with = "SizeDef")]
         pub default_size: Size,
 

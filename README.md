@@ -165,14 +165,14 @@ Currently, the only examples are:
 - [`color`](./examples/color.rs): shows how to apply a static colour tint to
   an `Svg`
 - [`crisp_shapes`](./examples/crisp_shapes.rs): shows how to
-  customize `usvg::Options` to render SVGs with crisp edges and with
+  customise `usvg::Options` to render SVGs with crisp edges and with
   anti-aliasing turned off.
 - [`custom_aspect_ratio`](./examples/custom_aspect_ratio.rs): shows how to
   render an SVG to a custom target size with a non-native aspect ratio
 - [`custom_size`](./examples/custom_size.rs): shows how to render an SVG to a
   custom target size
 - [`custom_style_sheet`](./examples/custom_style_sheet.rs): shows how to
-  customize `usvg::Options` while loading an SVG by setting `style_sheet`
+  customise `usvg::Options` while loading an SVG by setting `style_sheet`
 - [`simple`](./examples/simple.rs): shows the most basic usage of Bevy Resvg
 - [`ui`](./examples/ui.rs): shows how to render `UiSvg`s in UI nodes
 - [`zoom`](./examples/zoom.rs): shows what happens when you zoom too far into
@@ -259,8 +259,8 @@ code.
 because later versions of Bevy Vello refuse to compile on my machine.
 [^4]: The advanced `image_href_resolver`, `font_resolver`, and `fontdb` settings
 are not available due to missing serde support in `usvg`. If you require
-changing these settings, please use `resvg-option` branch. It's unfortunately
-not released on [crates.io](https://crates.io) due to it
+changing these settings, please use the `resvg-option` branch. It's
+unfortunately not released on [crates.io](https://crates.io) due to it
 [`[patch]`ing](https://doc.rust-lang.org/cargo/reference/overriding-dependencies.html#the-patch-section)
 `usvg`, which is
 [not allowed on crates.io](https://github.com/rust-lang/cargo/issues/13222).

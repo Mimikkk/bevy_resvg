@@ -228,7 +228,7 @@ actions:
   - [x] `Unused`
   - [x] `LoadedWithDependencies`
 - [ ] [`usvg::Options`](https://docs.rs/usvg/latest/usvg/struct.Options.html)
-  support
+  support [^4]
   - [ ] CSS support
 
 ## Minimum supported Rust version
@@ -250,3 +250,10 @@ code.
 [^3]: Based on tagged release
 [`v0.13.0` in `linebender/bevy_vello`](https://github.com/linebender/bevy_vello/tree/v0.13.0)
 because later versions of Bevy Vello refuse to compile on my machine.
+[^4]: Available on the `resvg-option` branch. Not released on Crates.io due to
+it
+[`[patch]`ing](https://doc.rust-lang.org/cargo/reference/overriding-dependencies.html#the-patch-section)
+`usvg`, which is
+[not allowed on crates.io](https://github.com/rust-lang/cargo/issues/13222).
+If you require using custom `usvg::Options`, please follow the instructions in
+[`resvg-option/USAGE.md`](https://github.com/theodorebje/bevy_resvg/blob/resvg-option/USAGE.md)

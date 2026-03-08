@@ -1,5 +1,65 @@
 # Changelog
 
+## [2.3.0] - 2026-03-08
+
+### Features
+
+1. Add `usvg::Options` support
+
+### Other
+
+1. `serde-remote` into `main`
+
+An alternative solution to the one used in `resvg-option`. Instead of
+patching `usvg`, we can use `#[serde(remote = "…")]` together with
+`#[serde(with = "…")]` to derive De/Serialize for types in `usvg`, as
+described in the serde documentation[^1].
+
+Properly implementing this involves a lot of boilerplate, so I wrote two
+macros: `enum_def` and `options_def`. All enums use `enum_def`, and
+`OptionsDef` uses the appropriately named `options_def` macro. `SizeDef`
+was small enough that I found it easier to just write the impls by hand
+instead of making a macro.
+
+I attempted to stay as far away from any custom syntax as possible, but
+in the end I added an `-> Ident` to the signatures to represent the
+remote types. This simplified the macro code, and should *hopefully* not
+be *too* confusing.
+
+This has the disadvantage of not allowing us to include every option in
+our own `OptionsDef`. However, I still consider this solution
+good-enough for now, especially considering that I am not even allowed
+to publish the alternative solution used in `resvg-option`.
+
+However, if one still requires configuring one of the options that
+`OptionsDef` doesn't expose (namely `image_href_resolver`,
+`font_resolver`, and `fontdb`), then one will still be able to use the
+`resvg-option` branch. It is important that one follows the instructions
+as described in the `USAGE.md` file in the `resvg-option` branch's root.
+<table>
+<tr>
+<th>Token</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>[^1]</td>
+<td><https://serde.rs/remote-derive.html></td>
+</tr>
+</table>
+
+### Refactor
+
+1. Simplify macros
+
+### Documentation
+
+1. *(spelling)* Fix spelling and grammar mistakes
+2. *(README)* Add `resvg-option` footnote
+3. *(README)* `target_render_size` is not a method
+4. Add documentation and examples for `Options`
+5. Fix markdown for rustdoc
+6. Fix grammar
+
 ## [2.2.0] - 2026-03-07
 
 ### Features
@@ -17,6 +77,7 @@
 1. *(sumi)* Add `revert` as commit type
 2. Temporary commit
 3. *(deps)* Don't require patch version
+4. *(release)* V2.2.0
 
 ### Revert
 

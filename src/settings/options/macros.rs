@@ -5,7 +5,7 @@ macro_rules! enum_def {
     // Match an enum, expand it, then process the rest
     (
         $(#[$struct_meta:meta])*
-        $vis:vis enum $name:ident {
+        $vis:vis enum $name:ident -> $foreign:ident {
             $(
                 $(#[$field_meta:meta])*
                 $variant_name:ident
@@ -15,7 +15,7 @@ macro_rules! enum_def {
     ) => {
         pastey::paste! {
             #[derive(Debug, Serialize, Deserialize, Clone, Copy)]
-            #[serde(remote = "" [<$name:replace("Def", "")>] "")]
+            #[serde(remote = "" $foreign "")]
             $(#[$struct_meta])*
             $vis enum $name {
                 $(
@@ -23,28 +23,28 @@ macro_rules! enum_def {
                     $variant_name,
                 )*
             }
+        }
 
-            impl From<[<$name:replace("Def", "")>]> for $name {
-                fn from(value: [<$name:replace("Def", "")>]) -> Self {
-                    match value {
-                        $([<$name:replace("Def", "")>]::$variant_name => Self::$variant_name,)*
-                    }
+        impl From<$foreign> for $name {
+            fn from(value: $foreign) -> Self {
+                match value {
+                    $(<$foreign>::$variant_name => Self::$variant_name,)*
                 }
             }
+        }
 
-            impl From<$name> for [<$name:replace("Def", "")>] {
-                fn from(value: $name) -> Self {
-                    match value {
-                        $($name::$variant_name => [<$name:replace("Def", "")>]::$variant_name,)*
-                    }
+        impl From<$name> for $foreign {
+            fn from(value: $name) -> Self {
+                match value {
+                    $($name::$variant_name => <$foreign>::$variant_name,)*
                 }
             }
+        }
 
 
-            impl Default for $name {
-                fn default() -> Self {
-                    [<$name:replace("Def", "")>]::default().into()
-                }
+        impl Default for $name {
+            fn default() -> Self {
+                <$foreign>::default().into()
             }
         }
 
@@ -65,37 +65,35 @@ macro_rules! options_def {
         }
         $($rest:tt)*
     ) => {
-        pastey::paste! {
-            #[derive(Debug, Serialize, Deserialize, Clone)]
-            $(#[$struct_meta])*
-            $vis struct $name {
-                $(
-                    $(#[$field_meta])*
-                    $field_vis $field_name : $field_ty,
-                )*
-            }
+        #[derive(Debug, Serialize, Deserialize, Clone)]
+        $(#[$struct_meta])*
+        $vis struct $name {
+            $(
+                $(#[$field_meta])*
+                $field_vis $field_name : $field_ty,
+            )*
+        }
 
-            impl From<$foreign> for $name {
-                fn from(value: $foreign) -> Self {
-                    Self {
-                        $($field_name: value.$field_name,)*
-                    }
+        impl From<$foreign> for $name {
+            fn from(value: $foreign) -> Self {
+                Self {
+                    $($field_name: value.$field_name,)*
                 }
             }
+        }
 
-            impl From<$name> for $foreign {
-                fn from(value: $name) -> Self {
-                    Self {
-                        $($field_name: value.$field_name,)*
-                        ..Default::default()
-                    }
+        impl From<$name> for $foreign {
+            fn from(value: $name) -> Self {
+                Self {
+                    $($field_name: value.$field_name,)*
+                    ..Default::default()
                 }
             }
+        }
 
-            impl Default for $name {
-                fn default() -> Self {
-                    [<$name:replace("Def", "")>]::default().into()
-                }
+        impl Default for $name {
+            fn default() -> Self {
+                <$foreign>::default().into()
             }
         }
     };

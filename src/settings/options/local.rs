@@ -8,7 +8,7 @@ enum_def! {
     /// Will be used when an SVG element's `shape-rendering` property is set to `auto`.
     ///
     /// Default: `GeometricPrecision`
-    pub enum ShapeRenderingDef {
+    pub enum ShapeRenderingDef -> ShapeRendering {
         OptimizeSpeed,
         CrispEdges,
         GeometricPrecision,
@@ -19,7 +19,7 @@ enum_def! {
     /// Will be used when an SVG element's `text-rendering` property is set to `auto`.
     ///
     /// Default: `OptimizeLegibility`
-    pub enum TextRenderingDef {
+    pub enum TextRenderingDef -> TextRendering {
         OptimizeSpeed,
         OptimizeLegibility,
         GeometricPrecision,
@@ -30,7 +30,7 @@ enum_def! {
     /// Will be used when an SVG element's `image-rendering` property is set to `auto`.
     ///
     /// Default: `OptimizeQuality`
-    pub enum ImageRenderingDef {
+    pub enum ImageRenderingDef -> ImageRendering {
         OptimizeQuality,
         OptimizeSpeed,
         // The following can only appear as presentation attributes.

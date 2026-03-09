@@ -1,5 +1,30 @@
 # Changelog
 
+## [2.3.2] - 2026-03-09
+
+### Bugfixes
+
+1. *(raster)* Handle post-load component insertion
+
+Handle a timing gap where entities can miss `Sprite`/`ImageNode`
+insertion if `Svg` (or `UiSvg`) is added after
+`AssetEvent::LoadedWithDependencies` has already fired.
+
+Update `handle_svg_loaded` and `handle_ui_svg_loaded` to query
+`Ref<Svg>`/`Ref<UiSvg>` instead of `&Svg`/`&UiSvg` and insert render
+components when either:
+
+- The `Asset` ID appears in `LoadedWithDependencies`, or
+- The `Svg` (or `UiSvg`) component was just added (`is_added()`).
+
+### Documentation
+
+1. Update SLoC and complexity count
+
+### Styling
+
+1. *(fmt)* Run cargo fmt
+
 ## [2.3.1] - 2026-03-09
 
 ### Documentation
@@ -14,6 +39,8 @@ Add a script written by ChatGPT that updates the `README.md` comparison
 table's Source Lines of Code and Complexity values for Bevy Resvg. I
 keep forgetting to update it myself, so a script will be helpful.
 ChatGPT wrote it since I don't know any `awk` syntax.
+
+2. *(release)* V2.3.1
 
 ## [2.3.0] - 2026-03-08
 

@@ -85,19 +85,20 @@ fn sync_existing_image_from_svg(
 }
 
 /// Handles newly loaded [`SvgFile`]s by adding [`Sprite`] components to waiting
-/// entities. This responds to [`AssetEvent::LoadedWithDependencies`].
+/// entities. This responds to [`AssetEvent::LoadedWithDependencies`] and newly
+/// added [`Svg`] components whose assets are already loaded.
 fn handle_svg_loaded(
     mut commands: Commands,
     mut svg_events: MessageReader<AssetEvent<SvgFile>>,
     svg_assets: Res<Assets<SvgFile>>,
     mut images: ResMut<Assets<Image>>,
-    query: Query<(Entity, &Svg, Option<&SvgColor>), Without<Sprite>>,
+    query: Query<(Entity, Ref<Svg>, Option<&SvgColor>), Without<Sprite>>,
 ) {
     let loaded_ids = read_events!(svg_events, AssetEvent::LoadedWithDependencies);
 
     for (entity, svg, svg_color) in &query {
         let id = svg.0.id();
-        if loaded_ids.contains(&id)
+        if (svg.is_added() || loaded_ids.contains(&id))
             && let Some(image_handle) = new_image_from_svg(id, &svg_assets, &mut images)
         {
             commands.entity(entity).insert(Sprite {
@@ -164,19 +165,20 @@ fn handle_svg_removed(
 
 /// Handles newly loaded [`SvgFile`]s by adding [`ImageNode`] components to
 /// waiting entities in UI. This responds to
-/// [`AssetEvent::LoadedWithDependencies`].
+/// [`AssetEvent::LoadedWithDependencies`] and newly added [`UiSvg`] components
+/// whose assets are already loaded.
 fn handle_ui_svg_loaded(
     mut commands: Commands,
     mut svg_events: MessageReader<AssetEvent<SvgFile>>,
     svg_assets: Res<Assets<SvgFile>>,
     mut images: ResMut<Assets<Image>>,
-    query: Query<(Entity, &UiSvg, Option<&SvgColor>), Without<ImageNode>>,
+    query: Query<(Entity, Ref<UiSvg>, Option<&SvgColor>), Without<ImageNode>>,
 ) {
     let loaded_ids = read_events!(svg_events, AssetEvent::LoadedWithDependencies);
 
     for (entity, svg, svg_color) in &query {
         let id = svg.0.id();
-        if loaded_ids.contains(&id)
+        if (svg.is_added() || loaded_ids.contains(&id))
             && let Some(image_handle) = new_image_from_svg(id, &svg_assets, &mut images)
         {
             commands.entity(entity).insert(ImageNode {

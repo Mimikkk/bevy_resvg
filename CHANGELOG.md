@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.3.1] - 2026-03-09
+
+### Documentation
+
+1. Update SLoC and complexity count
+
+### Miscellaneous Tasks
+
+1. *(release)* Add script to update metrics
+
+Add a script written by ChatGPT that updates the `README.md` comparison
+table's Source Lines of Code and Complexity values for Bevy Resvg. I
+keep forgetting to update it myself, so a script will be helpful.
+ChatGPT wrote it since I don't know any `awk` syntax.
+
 ## [2.3.0] - 2026-03-08
 
 ### Features
@@ -59,6 +74,10 @@ as described in the `USAGE.md` file in the `resvg-option` branch's root.
 4. Add documentation and examples for `Options`
 5. Fix markdown for rustdoc
 6. Fix grammar
+
+### Miscellaneous Tasks
+
+1. *(release)* V2.3.0
 
 ## [2.2.0] - 2026-03-07
 

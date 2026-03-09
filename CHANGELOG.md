@@ -1,5 +1,38 @@
 # Changelog
 
+## [2.3.3] - 2026-03-09
+
+### Bugfixes
+
+1. *(raster)* Actually handle post-load components
+
+I forgot to test the previous attempt at handling post-load component
+insertion. Due to the `read_events!` macro returning if the `svg_events`
+`MessageReader` doesn't match any of the expected `AssetEvent`s, the
+added check never actually did anything. Now it does.
+<table>
+<tr>
+<th>Token</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>See</td>
+<td>5048fc6c20d690e33ea35511df1d7febc4a77386</td>
+</tr>
+</table>
+
+### Documentation
+
+1. Update SLoC and complexity count
+
+### Miscellaneous Tasks
+
+1. *(release)* Use `git status --porcelain`
+
+`git diff-index` sometimes returns 0 even the working tree is clean due
+to a stale index stat cache. Use `git status --porcelain=1` instead,
+which also has the added benefit of flagging untracked files.
+
 ## [2.3.2] - 2026-03-09
 
 ### Bugfixes
@@ -24,6 +57,10 @@ components when either:
 ### Styling
 
 1. *(fmt)* Run cargo fmt
+
+### Miscellaneous Tasks
+
+1. *(release)* V2.3.2
 
 ## [2.3.1] - 2026-03-09
 

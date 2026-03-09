@@ -33,7 +33,7 @@ impl Plugin for SvgRasterPlugin {
     }
 }
 
-macro_rules! read_events {
+macro_rules! opt_read_events {
     ($svg_events:expr, $($asset_event:path) | +) => {{
         let mut ids = None;
         for event in $svg_events.read() {
@@ -44,7 +44,13 @@ macro_rules! read_events {
                 _ => (),
             }
         }
-        let Some(ids) = ids else {
+        ids
+    }};
+}
+
+macro_rules! read_events {
+    ($svg_events:expr, $($asset_event:path) | +) => {{
+        let Some(ids) = opt_read_events!($svg_events, $($asset_event) | +) else {
             return;
         };
         ids
@@ -94,11 +100,11 @@ fn handle_svg_loaded(
     mut images: ResMut<Assets<Image>>,
     query: Query<(Entity, Ref<Svg>, Option<&SvgColor>), Without<Sprite>>,
 ) {
-    let loaded_ids = read_events!(svg_events, AssetEvent::LoadedWithDependencies);
+    let loaded_ids = opt_read_events!(svg_events, AssetEvent::LoadedWithDependencies);
 
     for (entity, svg, svg_color) in &query {
         let id = svg.0.id();
-        if (svg.is_added() || loaded_ids.contains(&id))
+        if (svg.is_added() || loaded_ids.as_ref().is_some_and(|x| x.contains(&id)))
             && let Some(image_handle) = new_image_from_svg(id, &svg_assets, &mut images)
         {
             commands.entity(entity).insert(Sprite {
@@ -174,11 +180,11 @@ fn handle_ui_svg_loaded(
     mut images: ResMut<Assets<Image>>,
     query: Query<(Entity, Ref<UiSvg>, Option<&SvgColor>), Without<ImageNode>>,
 ) {
-    let loaded_ids = read_events!(svg_events, AssetEvent::LoadedWithDependencies);
+    let loaded_ids = opt_read_events!(svg_events, AssetEvent::LoadedWithDependencies);
 
     for (entity, svg, svg_color) in &query {
         let id = svg.0.id();
-        if (svg.is_added() || loaded_ids.contains(&id))
+        if (svg.is_added() || loaded_ids.as_ref().is_some_and(|x| x.contains(&id)))
             && let Some(image_handle) = new_image_from_svg(id, &svg_assets, &mut images)
         {
             commands.entity(entity).insert(ImageNode {

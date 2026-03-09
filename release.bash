@@ -26,8 +26,11 @@ if $NO_PUBLISH; then
 fi
 
 # Ensure working tree is clean
-if ! git diff-index --quiet HEAD --; then
-    echo "Working tree is not clean. Commit or stash changes first."
+CHANGED_FILES="$(git status --porcelain=1)"
+if [ -n "${CHANGED_FILES}" ]; then
+    echo "Working tree is not clean. Commit or stash your changes first."
+    echo "Changes since last commit:"
+    echo "${CHANGED_FILES}"
     exit 1
 fi
 

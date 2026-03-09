@@ -39,6 +39,12 @@ TAG="v${VERSION}"
 
 echo "Preparing release ${TAG}"
 
+echo "Updating comparison metrics"
+bash update_readme_metrics.bash
+
+git add README.md
+git commit -m "docs: update SLoC and complexity count"
+
 echo "Generating CHANGELOG.md"
 git-cliff --tag "${TAG}" -o CHANGELOG.md
 

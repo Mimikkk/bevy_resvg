@@ -1,5 +1,46 @@
 # Changelog
 
+## [2.4.0] - 2026-06-25
+
+### Features
+
+1. Update Bevy to 0.19
+
+Thank you to @atavistock (Aaron Tavistock) for creating this PR!
+<table>
+<tr>
+<th>Token</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Co-authored-by</td>
+<td>Theodore Bjernhed <fosseder@danwin1210.de></td>
+</tr>
+</table>
+
+### Miscellaneous Tasks
+
+1. Prepare for 2.4 release
+
+* feat: update my email address
+
+* feat: update examples
+
+* style(fmt): run `cargo fmt`
+
+* docs(README): update Bevy references
+
+* docs(README): fix grammar
+
+* chore: remove `sumi.toml`
+
+I put my `sumi.toml` in my own $XDG_CONFIG_DIR nowadays to avoid
+cluttering my repos.
+
+* docs(CONTRIBUTING): fix spelling mistake
+
+2. Fix release script
+
 ## [2.3.3] - 2026-03-09
 
 ### Bugfixes
@@ -32,6 +73,8 @@ added check never actually did anything. Now it does.
 `git diff-index` sometimes returns 0 even the working tree is clean due
 to a stale index stat cache. Use `git status --porcelain=1` instead,
 which also has the added benefit of flagging untracked files.
+
+2. *(release)* V2.3.3
 
 ## [2.3.2] - 2026-03-09
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e # Exit if there's an error
+set -ex # Exit if there's an error
 
 NO_PUBLISH=false
 
@@ -46,7 +46,7 @@ echo "Updating comparison metrics"
 bash update_readme_metrics.bash
 
 git add README.md
-git commit -m "docs: update SLoC and complexity count"
+git commit -m "docs: update SLoC and complexity count" || true
 
 echo "Generating CHANGELOG.md"
 git-cliff --tag "${TAG}" -o CHANGELOG.md
